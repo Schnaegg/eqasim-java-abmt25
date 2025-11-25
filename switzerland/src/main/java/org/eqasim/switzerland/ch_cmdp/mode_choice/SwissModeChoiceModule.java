@@ -1,5 +1,7 @@
 package org.eqasim.switzerland.ch_cmdp.mode_choice;
 
+import org.eqasim.switzerland.ch_cmdp.mode_choice.utilities.predictors.ElevationPredictor; // added import
+
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.opencsv.exceptions.CsvValidationException;
@@ -85,6 +87,7 @@ public class SwissModeChoiceModule extends AbstractEqasimExtension {
 		bind(SwissPersonPredictor.class);
 		bind(CarPassengerPredictor.class);
 		bind(SwissPtRoutePredictor.class);
+		bind(ElevationPredictor.class);
 
 		bind(ModeParameters.class).to(SwissCmdpModeParameters.class).asEagerSingleton();
 

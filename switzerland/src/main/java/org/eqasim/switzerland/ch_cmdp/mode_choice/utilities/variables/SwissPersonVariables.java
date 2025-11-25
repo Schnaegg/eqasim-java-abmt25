@@ -43,3 +43,4 @@ public class SwissPersonVariables extends PersonVariables {
 				statedPreferenceRegion,null, null, null, null);
 	}
 }
+

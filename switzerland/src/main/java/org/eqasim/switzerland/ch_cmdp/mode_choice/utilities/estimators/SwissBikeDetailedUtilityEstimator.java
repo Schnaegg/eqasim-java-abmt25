@@ -1,4 +1,6 @@
 package org.eqasim.switzerland.ch_cmdp.mode_choice.utilities.estimators;
+import org.eqasim.switzerland.ch_cmdp.mode_choice.utilities.predictors.ElevationPredictor; // added import
+import org.eqasim.switzerland.ch_cmdp.mode_choice.utilities.variables.ElevationVariables; // added import
 
 import com.google.inject.Inject;
 import org.eqasim.core.components.calibration.VariablesWriter;
@@ -23,16 +25,18 @@ public class SwissBikeDetailedUtilityEstimator extends BikeUtilityEstimator {
     private final SwissPersonPredictor personPredictor;
     private final BikePredictor bikePredictor;
     private final VariablesWriter variablesWriter;
+    private final ElevationPredictor elevationPredictor; // added field
 
     @Inject
     public SwissBikeDetailedUtilityEstimator(SwissCmdpModeParameters parameters, SwissPersonPredictor personPredictor,
-                                             BikePredictor bikePredictor, VariablesWriter variablesWriter) {
+                                             BikePredictor bikePredictor, VariablesWriter variablesWriter, ElevationPredictor elevationPredictor) {
         super(parameters, personPredictor.delegate, bikePredictor);
 
         this.parameters = parameters;
         this.personPredictor = personPredictor;
         this.bikePredictor = bikePredictor;
         this.variablesWriter = variablesWriter;
+        this.elevationPredictor = elevationPredictor; // added assignment
     }
 
     protected double estimateConstantUtility() {
@@ -90,14 +94,24 @@ public class SwissBikeDetailedUtilityEstimator extends BikeUtilityEstimator {
         return 0.0;
     }
 
+    protected double estimateElevationUtility(ElevationVariables elevationVariables) {
+        return parameters.bike.betaSlope_u * Math.max(0, elevationVariables.slope); // only penalize positive slopes
+    }
+
+
+
+
     @Override
     public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
         SwissPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
         BikeVariables bikeVariables = bikePredictor.predictVariables(person, trip, elements);
+        ElevationVariables elevationVariables = elevationPredictor.predict(person, trip, elements); // added prediction
+
 
         double utility = 0.0;
         utility += estimateConstantUtility();
         utility += estimateTravelTimeUtility(bikeVariables);
+        utility += estimateElevationUtility(elevationVariables); // added utility calculation
 
         utility += estimateAgeUtility(personVariables);
         utility += estimateSexUtility(personVariables);
@@ -111,14 +125,14 @@ public class SwissBikeDetailedUtilityEstimator extends BikeUtilityEstimator {
         utility += estimateCantonUtility(person);
 
         if(variablesWriter.isInitiated()) {
-            writeVariablesToCsv(person, trip, bikeVariables, personVariables, utility);
+            writeVariablesToCsv(person, trip, bikeVariables, personVariables, elevationVariables, utility);
         }
 
         return utility;
     }
 
     private void writeVariablesToCsv(Person person, DiscreteModeChoiceTrip trip, BikeVariables bikevariable,
-                                     SwissPersonVariables personVariables, double utility) {
+                                     SwissPersonVariables personVariables, ElevationVariables elevationVariables, double utility) {
         double departureTime = trip.getDepartureTime();
         int tripIndex = trip.getIndex();
         String personId = person.getId().toString();
@@ -135,8 +149,10 @@ public class SwissBikeDetailedUtilityEstimator extends BikeUtilityEstimator {
         bikeAttributes.put("urbanDestination", Utils.destinationIsUrban(trip) ? "1" : "0");
         bikeAttributes.put("shortDistance", Utils.isShortDistanceTrip(trip) ? "1" : "0");
 
-        bikeAttributes.put("travelTime_min", String.valueOf(bikevariable.travelTime_min));
+        bikeAttributes.put("travelTime_min", String.valueOf(bikevariable.travelTime_min)); // added
 
+        bikeAttributes.put("slope", String.valueOf(elevationVariables.slope));
+        
         variablesWriter.writeVariables("bike", personId, tripIndex, departureTime, utility, bikeAttributes);
     }
 

@@ -140,7 +140,7 @@
 		<!-- Default=0. First Iteration of a simulation. -->
 		<param name="firstIteration" value="0" />
 		<!-- Default=1000. Last Iteration of a simulation. -->
-		<param name="lastIteration" value="2" />
+		<param name="lastIteration" value="2" /> 
 		<!-- Defines which mobility simulation will be used. Currently supported: qsim JDEQSim hermes 
 		Depending on the chosen mobsim, you'll have to add additional config modules to configure the corresponding mobsim.
 		For 'qsim', add a module 'qsim' to the config. -->
@@ -831,6 +831,5 @@
 		<param name="vspDefaultsCheckingLevel" value="ignore" />
 		<!-- if true then writes output_events in output directory.  default is `false'. Will only work when lastIteration is multiple of events writing interval -->
 		<param name="writingOutputEvents" value="true" />
-	</module>
 
 </config>
