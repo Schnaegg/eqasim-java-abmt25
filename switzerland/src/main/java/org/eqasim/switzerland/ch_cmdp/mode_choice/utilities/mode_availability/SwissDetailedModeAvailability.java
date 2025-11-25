@@ -38,10 +38,30 @@ public class SwissDetailedModeAvailability implements ModeAvailability {
             modes.add(TransportMode.car);
         }
 
+        // Check ebike availability
+        boolean ebikeAvailability = true;
+
+        if (person.getAttributes().getAttribute("ebikeAvailability").equals("FOR_NONE")) {
+            ebikeAvailability = false;
+        }
+
+        if (PersonUtils.getLicense(person).equals("no")) {
+            ebikeAvailability = false;
+        }
+
+        if (ebikeAvailability) {
+            modes.add("ebike");
+        }
+
+
         // Check bike availability
         boolean bikeAvailability = true;
 
         if (person.getAttributes().getAttribute("bikeAvailability").equals("FOR_NONE")) {
+            bikeAvailability = false;
+        }
+
+        if (ebikeAvailability == true) {
             bikeAvailability = false;
         }
 
@@ -68,8 +88,8 @@ public class SwissDetailedModeAvailability implements ModeAvailability {
         }
 
         // Add special modes "*_loop" if applicable
-        List<String> LOOP_MODES      = new ArrayList<>(Arrays.asList("walk_loop", "pt_loop", "bike_loop", "car_loop", "car_passenger_loop"));
-        List<String> LOOP_ATTRIBUTES = new ArrayList<>(Arrays.asList("hasWalkLoopTrip", "hasPtLoopTrip", "hasBikeLoopTrip", "hasCarLoopTrip", "hasCarPassengerLoopTrip"));
+        List<String> LOOP_MODES      = new ArrayList<>(Arrays.asList("walk_loop", "pt_loop", "bike_loop", "ebike_loop", "car_loop", "car_passenger_loop"));
+        List<String> LOOP_ATTRIBUTES = new ArrayList<>(Arrays.asList("hasWalkLoopTrip", "hasPtLoopTrip", "hasBikeLoopTrip", "hasEbikeLoopTrip", "hasCarLoopTrip", "hasCarPassengerLoopTrip"));
 
         for (int i = 0; i < LOOP_MODES.size(); i++){
             String mode = LOOP_MODES.get(i);

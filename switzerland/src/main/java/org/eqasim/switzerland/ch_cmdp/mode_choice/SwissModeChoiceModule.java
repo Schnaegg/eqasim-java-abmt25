@@ -55,6 +55,7 @@ public class SwissModeChoiceModule extends AbstractEqasimExtension {
 	static public final String MODE_AVAILABILITY_NAME = "SwissDetailedModeAvailability";
 	static public final String CAR_ESTIMATOR_NAME = "SwissDetailedCarEstimator";
 	static public final String BIKE_ESTIMATOR_NAME = "SwissDetailedBikeEstimator";
+	static public final String EBIKE_ESTIMATOR_NAME = "SwissDetailedEbikeEstimator";
 	static public final String PT_ESTIMATOR_NAME   = "SwissDetailedPtEstimator";
 	static public final String WALK_ESTIMATOR_NAME = "SwissDetailedWalkEstimator";
 	static public final String CP_ESTIMATOR_NAME = "SwissDetailedCpEstimator";
@@ -78,6 +79,7 @@ public class SwissModeChoiceModule extends AbstractEqasimExtension {
 		bindModeAvailability(MODE_AVAILABILITY_NAME).to(SwissDetailedModeAvailability.class);
 		bindUtilityEstimator(CAR_ESTIMATOR_NAME).to(SwissCarDetailedUtilityEstimator.class);
 		bindUtilityEstimator(BIKE_ESTIMATOR_NAME).to(SwissBikeDetailedUtilityEstimator.class);
+		bindUtilityEstimator(EBIKE_ESTIMATOR_NAME).to(SwissEbikeDetailedUtilityEstimator.class);
 		bindUtilityEstimator(PT_ESTIMATOR_NAME).to(SwissPtDetailedUtilityEstimator.class);
 		bindUtilityEstimator(WALK_ESTIMATOR_NAME).to(SwissWalkDetailedUtilityEstimator.class);
 		bindUtilityEstimator(CP_ESTIMATOR_NAME).to(SwissCarPassengerDetailedUtilityEstimator.class);
@@ -163,6 +165,7 @@ public class SwissModeChoiceModule extends AbstractEqasimExtension {
 				"walk", calConfig.getWalkModeShare(),
 				"bike", calConfig.getBikeModeShare(),
 				"car_passenger", calConfig.getCarPassengerModeShare()
+				// TODO: Add "ebike" when AlphaCalibratorConfig is updated with getEbikeModeShare()
 		);
 
 		return new AlphaCantonCalibrator(scenario,outputHierarchy,targetModeShares, modeParameters,
@@ -187,6 +190,7 @@ public class SwissModeChoiceModule extends AbstractEqasimExtension {
 				"walk", calConfig.getWalkModeShare(),
 				"bike", calConfig.getBikeModeShare(),
 				"car_passenger", calConfig.getCarPassengerModeShare()
+				// TODO: Add "ebike" when AlphaCalibratorConfig is updated with getEbikeModeShare()
 		);
 
 		return new AlphaClusterCalibrator(scenario,outputHierarchy, targetModeShares, modeParameters,

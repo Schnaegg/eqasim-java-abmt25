@@ -35,7 +35,7 @@ public class AlphaClusterCalibrator implements FastCalibration {
 
     // Mode and cluster data
     private final List<String> modesToCalibrate;
-    private final Set<String> consideredModes = Set.of("car", "pt", "walk", "bike", "car_passenger");
+    private final Set<String> consideredModes = Set.of("car", "pt", "walk", "bike", "ebike", "car_passenger");
 
     // Mode share and counts
     private final Map<String, Double> shares = new HashMap<>();
@@ -239,6 +239,7 @@ public class AlphaClusterCalibrator implements FastCalibration {
                 alphas.put("pt", modeParameters.pt.betaRegion1_u);
                 alphas.put("walk", modeParameters.walk.betaRegion1_u);
                 alphas.put("bike", modeParameters.bike.betaRegion1_u);
+                alphas.put("ebike", modeParameters.ebike.betaRegion1_u);
                 alphas.put("car_passenger", modeParameters.cp.betaRegion1_u);
                 break;
             case 2:
@@ -246,6 +247,7 @@ public class AlphaClusterCalibrator implements FastCalibration {
                 alphas.put("pt", modeParameters.pt.betaRegion2_u);
                 alphas.put("walk", modeParameters.walk.betaRegion2_u);
                 alphas.put("bike", modeParameters.bike.betaRegion2_u);
+                alphas.put("ebike", modeParameters.ebike.betaRegion2_u);
                 alphas.put("car_passenger", modeParameters.cp.betaRegion2_u);
                 break;
             default:
@@ -253,6 +255,7 @@ public class AlphaClusterCalibrator implements FastCalibration {
                 alphas.put("pt", modeParameters.pt.alpha_u);
                 alphas.put("walk", modeParameters.walk.alpha_u);
                 alphas.put("bike", modeParameters.bike.alpha_u);
+                alphas.put("ebike", modeParameters.ebike.alpha_u);
                 alphas.put("car_passenger", modeParameters.cp.alpha_u);
                 break;
         }
@@ -268,6 +271,7 @@ public class AlphaClusterCalibrator implements FastCalibration {
                 modeParameters.pt.betaRegion1_u   = alphas.get("pt") - alphasRegion0Changes.getOrDefault("pt", 0.0);
                 modeParameters.walk.betaRegion1_u = alphas.get("walk") - alphasRegion0Changes.getOrDefault("walk", 0.0);
                 modeParameters.bike.betaRegion1_u = alphas.get("bike") - alphasRegion0Changes.getOrDefault("bike", 0.0);
+                modeParameters.ebike.betaRegion1_u = alphas.get("ebike") - alphasRegion0Changes.getOrDefault("ebike", 0.0);
                 modeParameters.cp.betaRegion1_u   = alphas.get("car_passenger") - alphasRegion0Changes.getOrDefault("car_passenger", 0.0);
                 break;
             case 2:
@@ -275,6 +279,7 @@ public class AlphaClusterCalibrator implements FastCalibration {
                 modeParameters.pt.betaRegion2_u   = alphas.get("pt") - alphasRegion0Changes.getOrDefault("pt", 0.0);
                 modeParameters.walk.betaRegion2_u = alphas.get("walk") - alphasRegion0Changes.getOrDefault("walk", 0.0);
                 modeParameters.bike.betaRegion2_u = alphas.get("bike") - alphasRegion0Changes.getOrDefault("bike", 0.0);
+                modeParameters.ebike.betaRegion2_u = alphas.get("ebike") - alphasRegion0Changes.getOrDefault("ebike", 0.0);
                 modeParameters.cp.betaRegion2_u   = alphas.get("car_passenger") - alphasRegion0Changes.getOrDefault("car_passenger", 0.0);
                 break;
             default:
@@ -282,12 +287,14 @@ public class AlphaClusterCalibrator implements FastCalibration {
                 alphasRegion0Changes.put("pt", alphas.get("pt") - modeParameters.pt.alpha_u);
                 alphasRegion0Changes.put("walk", alphas.get("walk") - modeParameters.walk.alpha_u);
                 alphasRegion0Changes.put("bike", alphas.get("bike") - modeParameters.bike.alpha_u);
+                alphasRegion0Changes.put("ebike", alphas.get("ebike") - modeParameters.ebike.alpha_u);
                 alphasRegion0Changes.put("car_passenger", alphas.get("car_passenger") - modeParameters.cp.alpha_u);
 
                 modeParameters.car.alpha_u  = alphas.get("car");
                 modeParameters.pt.alpha_u   = alphas.get("pt");
                 modeParameters.walk.alpha_u = alphas.get("walk");
                 modeParameters.bike.alpha_u = alphas.get("bike");
+                modeParameters.ebike.alpha_u = alphas.get("ebike");
                 modeParameters.cp.alpha_u   = alphas.get("car_passenger");
                 break;
         }
