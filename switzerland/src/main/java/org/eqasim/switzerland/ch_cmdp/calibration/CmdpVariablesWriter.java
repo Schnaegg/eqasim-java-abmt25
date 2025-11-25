@@ -2,14 +2,38 @@ package org.eqasim.switzerland.ch_cmdp.calibration;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 import org.eqasim.core.components.calibration.writer.StandardVariablesWriter;
 
 
 public class CmdpVariablesWriter extends StandardVariablesWriter {
 
+    protected BufferedWriter ebikeWriter = null;
+
     public CmdpVariablesWriter() {
         super();
+    }
+
+    @Override
+    protected void initWriters(String basePath) throws IOException {
+        super.initWriters(basePath);
+        
+        // Add ebike writer
+        Path baseDir = Path.of(basePath).getParent();
+        String baseName = Path.of(basePath).getFileName().toString();
+        ebikeWriter = newBufferedWriterForMode(baseDir, baseName, "ebike");
+        writeHeader(ebikeWriter, "ebike");
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        try {
+            if (ebikeWriter != null) ebikeWriter.close();
+        } catch (IOException e) {
+            logger.error("Failed to close ebike writer: {}", e.getMessage());
+        }
     }
 
     @Override
@@ -22,7 +46,7 @@ public class CmdpVariablesWriter extends StandardVariablesWriter {
                                               "accessEgressTime_min;inVehicleTime_min;waitingTime_min;numberOfLineSwitches;" +
                                               "cost_MU;income\n");
                 case "car" -> writer.write(commonHeader + "travelTime_min;cost_MU;income;subUrbanDestination\n");
-                case "bike", "walk" -> writer.write(commonHeader + "travelTime_min\n");
+                case "bike", "ebike", "walk" -> writer.write(commonHeader + "travelTime_min\n");
                 case "car_passenger" -> writer.write(commonHeader + "travelTime_min;drivingLicense\n");
                 default -> System.err.println("Unknown mode: " + mode);
             }
@@ -87,6 +111,14 @@ public class CmdpVariablesWriter extends StandardVariablesWriter {
                             ));
                             bikeWriter.write(sb.toString());
                             bikeWriter.flush();
+                            break;
+
+                        case "ebike":
+                            sb.append(String.format(";%s\n",
+                                    attributes.get("travelTime_min")
+                            ));
+                            ebikeWriter.write(sb.toString());
+                            ebikeWriter.flush();
                             break;
 
                         case "walk":

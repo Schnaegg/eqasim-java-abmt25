@@ -57,7 +57,7 @@ public class CmdpOptimizer extends StandardOptimizer {
             args.put("--optimizer-cache", optimizerPath + "/optimizerCache");
             args.put("--distance-bins", calibrationConfig.getDistanceBins());
             args.put("--utilities", "ch_cmdp");
-            args.put("--modes-in-loss", "car,pt,walk,bike,car_passenger");
+            args.put("--modes-in-loss", "car,pt,walk,bike,ebike,car_passenger");
             args.put("--beta-decay-method", "constant");
             // Append to command list
             args.forEach((key, value) -> {
