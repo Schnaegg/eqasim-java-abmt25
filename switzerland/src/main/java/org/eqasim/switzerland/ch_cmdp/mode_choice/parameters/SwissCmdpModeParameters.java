@@ -20,7 +20,6 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         public double betaShortDistance_u = 0.0;
         public double betaDestinationWork_u = 0.0;
         public double betaUrbanDestination_u = 0.0;
-
         public double  betaSlope_u = 0.0;
     }
 
@@ -132,9 +131,7 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         parameters.bike.betaTravelTime_u_min= -0.8566142999818513;
         parameters.bike.betaUrbanDestination_u= -0.2517193568167992;
         parameters.bike.travelTimeExponent= 0.5618774653314881;
-
         parameters.bike.betaSlope_u = -0.034; // from the MZ bike share
-
         // car
         parameters.car.additionalAccessEgressWalkTime_min= 0.0;
         parameters.car.alpha_u= 4.068909453602562;
