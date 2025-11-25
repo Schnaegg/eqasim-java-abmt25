@@ -20,13 +20,8 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         public double betaShortDistance_u = 0.0;
         public double betaDestinationWork_u = 0.0;
         public double betaUrbanDestination_u = 0.0;
-<<<<<<< HEAD
-        public double  betaSlope_u = 0.0;
-=======
-
         public double betaSlope_u = 0.0;
     }
-
     public static class SwissEbikeParameters {
         public double alpha_u = 0.0;
         public double betaTravelTime_u_min = 0.0;
@@ -40,8 +35,8 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         public double betaShortDistance_u = 0.0;
         public double betaDestinationWork_u = 0.0;
         public double betaUrbanDestination_u = 0.0;
->>>>>>> 8c46e9e768dba1a24d6de161c87491f4f4419b52
     }
+
 
     public static class SwissCarParameters {
         public double alpha_u = 0.0;
@@ -152,9 +147,6 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         parameters.bike.betaTravelTime_u_min= -0.8566142999818513;
         parameters.bike.betaUrbanDestination_u= -0.2517193568167992;
         parameters.bike.travelTimeExponent= 0.5618774653314881;
-<<<<<<< HEAD
-        parameters.bike.betaSlope_u = -0.034; // from the MZ bike share
-=======
         parameters.bike.betaSlope_u= -0.034;
         // ebike
         parameters.ebike.alpha_u= 4.49243634582002;
@@ -168,7 +160,6 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         parameters.ebike.betaTravelTime_u_min= -0.8566142999818513;
         parameters.ebike.betaUrbanDestination_u= -0.2517193568167992;
         parameters.ebike.travelTimeExponent= 0.5618774653314881;
->>>>>>> 8c46e9e768dba1a24d6de161c87491f4f4419b52
         // car
         parameters.car.additionalAccessEgressWalkTime_min= 0.0;
         parameters.car.alpha_u= 4.068909453602562;
