@@ -39,6 +39,21 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         public double betaUrbanDestination_u = 0.0;
     }
 
+    public static class SwissEbikeParameters {
+    public double alpha_u = 0.0;
+    public double betaTravelTime_u_min = 0.0;
+    public double travelTimeExponent = 1.0;
+    
+    public double betaAge_u = 0.0;
+    public double betaSex_u = 0.0;
+    public double betaRegion1_u = 0.0;
+    public double betaRegion2_u = 0.0;
+    public double betaOriginHome_u = 0.0;
+    public double betaShortDistance_u = 0.0;
+    public double betaDestinationWork_u = 0.0;
+    public double betaUrbanDestination_u = 0.0;
+}
+
     public static class SwissCarParameters {
         public double alpha_u = 0.0;
         public double betaTravelTime_u_min = 0.0;
@@ -148,8 +163,12 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         parameters.bike.betaTravelTime_u_min= -0.8566142999818513;
         parameters.bike.betaUrbanDestination_u= -0.2517193568167992;
         parameters.bike.travelTimeExponent= 0.5618774653314881;
+<<<<<<< Updated upstream
         parameters.bike.betaSlope_u= -0.034;
         // ebike
+=======
+        // e-bike
+>>>>>>> Stashed changes
         parameters.ebike.alpha_u= 4.49243634582002;
         parameters.ebike.betaAge_u= 0.002887604600585483;
         parameters.ebike.betaDestinationWork_u= 0.3089944496762585;
