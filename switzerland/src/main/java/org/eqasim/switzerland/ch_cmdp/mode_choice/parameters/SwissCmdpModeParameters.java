@@ -22,19 +22,19 @@ public class SwissCmdpModeParameters extends SwissModeParameters {
         public double betaUrbanDestination_u = 0.0;
         public double betaSlope_u = 0.0;
     }
-    public static class SwissEbikeParameters {
-        public double alpha_u = 0.0;
-        public double betaTravelTime_u_min = 0.0;
-        public double travelTimeExponent = 1.0;
+   public static class SwissEbikeParameters {
+       public double alpha_u = 0.0;
+       public double betaTravelTime_u_min = 0.0;
+       public double travelTimeExponent = 1.0;
 
-        public double betaAge_u = 0.0;
-        public double betaSex_u = 0.0;
-        public double betaRegion1_u = 0.0;
-        public double betaRegion2_u = 0.0;
-        public double betaOriginHome_u = 0.0;
-        public double betaShortDistance_u = 0.0;
-        public double betaDestinationWork_u = 0.0;
-        public double betaUrbanDestination_u = 0.0;
+       public double betaAge_u = 0.0;
+       public double betaSex_u = 0.0;
+       public double betaRegion1_u = 0.0;
+       public double betaRegion2_u = 0.0;
+       public double betaOriginHome_u = 0.0;
+       public double betaShortDistance_u = 0.0;
+       public double betaDestinationWork_u = 0.0;
+       public double betaUrbanDestination_u = 0.0;
     }
 
 

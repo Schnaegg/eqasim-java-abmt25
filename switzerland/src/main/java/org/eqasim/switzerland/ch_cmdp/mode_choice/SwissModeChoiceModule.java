@@ -79,7 +79,7 @@ public class SwissModeChoiceModule extends AbstractEqasimExtension {
 		bindModeAvailability(MODE_AVAILABILITY_NAME).to(SwissDetailedModeAvailability.class);
 		bindUtilityEstimator(CAR_ESTIMATOR_NAME).to(SwissCarDetailedUtilityEstimator.class);
 		bindUtilityEstimator(BIKE_ESTIMATOR_NAME).to(SwissBikeDetailedUtilityEstimator.class);
-		bindUtilityEstimator(EBIKE_ESTIMATOR_NAME).to(SwissEbikeDetailedUtilityEstimator.class);
+		// bindUtilityEstimator(EBIKE_ESTIMATOR_NAME).to(SwissEbikeDetailedUtilityEstimator.class);
 		bindUtilityEstimator(PT_ESTIMATOR_NAME).to(SwissPtDetailedUtilityEstimator.class);
 		bindUtilityEstimator(WALK_ESTIMATOR_NAME).to(SwissWalkDetailedUtilityEstimator.class);
 		bindUtilityEstimator(CP_ESTIMATOR_NAME).to(SwissCarPassengerDetailedUtilityEstimator.class);

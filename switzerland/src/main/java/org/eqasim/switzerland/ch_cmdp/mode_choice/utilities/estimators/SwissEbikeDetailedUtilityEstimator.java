@@ -134,7 +134,6 @@ public class SwissEbikeDetailedUtilityEstimator extends BikeUtilityEstimator {
         bikeAttributes.put("destinationWork", Utils.destinationIsWork(trip) ? "1" : "0");
         bikeAttributes.put("urbanDestination", Utils.destinationIsUrban(trip) ? "1" : "0");
         bikeAttributes.put("shortDistance", Utils.isShortDistanceTrip(trip) ? "1" : "0");
-
         bikeAttributes.put("travelTime_min", String.valueOf(bikevariable.travelTime_min));
 
         variablesWriter.writeVariables("ebike", personId, tripIndex, departureTime, utility, bikeAttributes);

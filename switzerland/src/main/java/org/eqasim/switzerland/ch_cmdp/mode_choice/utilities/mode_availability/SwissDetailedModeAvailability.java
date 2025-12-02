@@ -53,7 +53,7 @@ public class SwissDetailedModeAvailability implements ModeAvailability {
             modes.add("ebike");
         }
 
-
+        
         // Check bike availability
         boolean bikeAvailability = true;
 
