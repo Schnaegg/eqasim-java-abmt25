@@ -16,23 +16,27 @@ import org.matsim.vehicles.PersonVehicles;
 
 public class AddBikeVehicles {
     public static void main(String[] args) {
-        String configPath = "C:\\Users\\robig\\Desktop\\ABMT Git\\Project\\Data\\Lausanne_10pct\\lausanne_10pctconfig.xml"; //change to your config path
-        String outputVehiclesFile = "C:\\Users\\robig\\Desktop\\ABMT Git\\Project\\Data\\Lausanne_10pct\\lausanne_10pct_vehicles_w_bike.xml"; // can name as you like and change to the path you want to save the file 
-        String outputPopFile = "C:\\Users\\robig\\Desktop\\ABMT Git\\Project\\Data\\Lausanne_10pct\\lausanne_10pct_population_w_bike_vehicles.xml.gz";//= "..\\scenarios\\Lausanne_10pct\\new_vehicles.xml"; // can name as you like and change to the path you want to save the file 
+        String configPath = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctconfig.xml"; // change to your
+        String outputVehiclesFile = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctvehicles_w_ebike.xml.gz";
+        String outputPopFile = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctpopulation_w_ebike_vehicles.xml.gz"; 
 
         Config config = ConfigUtils.loadConfig(configPath);
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
         Vehicles vehicles = scenario.getVehicles();
+        String bikeTypeId = "default_bike";
         String bikeMode = "bike";
-        String ebike25Mode = "ebike25";
-        String ebike45Mode = "ebike45";
+        String ebike25TypeId = "default_ebike25";
+        String ebike45TypeId = "default_ebike45";
+        String ebikeMode = "ebike"; 
 
         // We define a bike vehicle type
-        VehicleType bikeType = VehicleUtils.createVehicleType(Id.create(bikeMode, VehicleType.class));
+        VehicleType bikeType = VehicleUtils.createVehicleType(Id.create(bikeTypeId, VehicleType.class));
         bikeType.setMaximumVelocity(17.6 / 3.6); // can define yours based on your scenario
         bikeType.setPcuEquivalents(0.25); // can define yours
         bikeType.getCapacity().setSeats(1);
+        bikeType.setNetworkMode(bikeMode);  // ADD THIS LINE
+        bikeType.setLength(2.0); // ADD THIS LINE
 
         if (!vehicles.getVehicleTypes().containsKey(bikeType.getId())) {
             vehicles.addVehicleType(bikeType);
@@ -41,10 +45,13 @@ public class AddBikeVehicles {
         }
 
         // Define ebike25 vehicle type (25 km/h)
-        VehicleType ebike25Type = VehicleUtils.createVehicleType(Id.create(ebike25Mode, VehicleType.class));
+        VehicleType ebike25Type = VehicleUtils.createVehicleType(Id.create(ebike25TypeId, VehicleType.class));
         ebike25Type.setMaximumVelocity(25.0 / 3.6); // 25 km/h
         ebike25Type.setPcuEquivalents(0.25);
         ebike25Type.getCapacity().setSeats(1);
+        ebike25Type.setNetworkMode(ebikeMode);  // ADD THIS LINE
+        ebike25Type.setLength(2.0); // ADD THIS LINE
+
 
         if (!vehicles.getVehicleTypes().containsKey(ebike25Type.getId())) {
             vehicles.addVehicleType(ebike25Type);
@@ -53,10 +60,12 @@ public class AddBikeVehicles {
         }
 
         // Define ebike45 vehicle type (45 km/h)
-        VehicleType ebike45Type = VehicleUtils.createVehicleType(Id.create(ebike45Mode, VehicleType.class));
+        VehicleType ebike45Type = VehicleUtils.createVehicleType(Id.create(ebike45TypeId, VehicleType.class));
         ebike45Type.setMaximumVelocity(45.0 / 3.6); // 45 km/h
         ebike45Type.setPcuEquivalents(0.25);
         ebike45Type.getCapacity().setSeats(1);
+        ebike45Type.setNetworkMode(ebikeMode);  // ADD THIS LINE
+        ebike45Type.setLength(2.0); // ADD THIS LINE
 
         if (!vehicles.getVehicleTypes().containsKey(ebike45Type.getId())) {
             vehicles.addVehicleType(ebike45Type);
@@ -81,10 +90,10 @@ public class AddBikeVehicles {
                 VehicleType vehicleType;
                 
                 if (ebikeAvailability.toString().equals("EBIKE25")) {
-                    vehicleMode = ebike25Mode;
+                    vehicleMode = ebikeMode;
                     vehicleType = ebike25Type;
                 } else { // EBIKE45
-                    vehicleMode = ebike45Mode;
+                    vehicleMode = ebikeMode;
                     vehicleType = ebike45Type;
                 }
                 

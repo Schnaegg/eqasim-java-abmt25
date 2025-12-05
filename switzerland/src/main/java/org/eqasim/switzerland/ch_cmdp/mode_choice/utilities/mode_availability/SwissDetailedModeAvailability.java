@@ -39,21 +39,25 @@ public class SwissDetailedModeAvailability implements ModeAvailability {
         }
 
         // Check ebike availability
-        boolean ebikeAvailability = true;
+        boolean ebikeAvailability = false;
+        Object ebikeAttr = person.getAttributes().getAttribute("ebikeAvailability");
 
-        if (person.getAttributes().getAttribute("ebikeAvailability").equals("FOR_NONE")) {
-            ebikeAvailability = false;
-        }
-
-        if (PersonUtils.getLicense(person).equals("no")) {
-            ebikeAvailability = false;
+        if (ebikeAttr != null && !ebikeAttr.toString().equals("NO_EBIKE")) {
+            // EBIKE25 doesn't require a license, only EBIKE45 does
+            if (ebikeAttr.toString().equals("EBIKE25")) {
+                ebikeAvailability = true;
+            } else if (ebikeAttr.toString().equals("EBIKE45")) {
+                if (!PersonUtils.getLicense(person).equals("no")) {
+                    ebikeAvailability = true;
+                }
+            }
         }
 
         if (ebikeAvailability) {
             modes.add("ebike");
         }
 
-        
+
         // Check bike availability
         boolean bikeAvailability = true;
 
@@ -74,6 +78,13 @@ public class SwissDetailedModeAvailability implements ModeAvailability {
 
         if (isOutside != null && isOutside) {
             modes.add("outside");
+        }
+
+        // Safety check: ensure person doesn't have both bike and ebike
+        if (modes.contains("ebike") && modes.contains(TransportMode.bike)) {
+            throw new RuntimeException("Person " + person.getId() + " has both bike and ebike modes available! " +
+                    "ebikeAvailability=" + person.getAttributes().getAttribute("ebikeAvailability") + 
+                    ", bikeAvailability=" + person.getAttributes().getAttribute("bikeAvailability"));
         }
 
         // Add special mode "car_passenger" if applicable
