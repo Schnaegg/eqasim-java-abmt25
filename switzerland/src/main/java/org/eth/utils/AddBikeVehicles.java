@@ -1,11 +1,21 @@
 package org.eth.utils;
 
+
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.Plan;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.PopulationWriter;
+
+import org.matsim.api.core.v01.population.Route;
+
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
+import org.matsim.core.population.routes.NetworkRoute;
+import org.matsim.core.population.routes.RouteUtils;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.vehicles.Vehicle;
 import org.matsim.vehicles.VehicleType;
@@ -17,8 +27,8 @@ import org.matsim.vehicles.PersonVehicles;
 public class AddBikeVehicles {
     public static void main(String[] args) {
         String configPath = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctconfig.xml"; // change to your
-        String outputVehiclesFile = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctvehicles_w_ebike.xml.gz";
-        String outputPopFile = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctpopulation_w_ebike_vehicles.xml.gz"; 
+        String outputVehiclesFile = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctvehicles_w_bike.xml.gz";
+        String outputPopFile = "/Users/laura/Desktop/ABMT/Project/Data/Lausanne_10pct/lausanne_10pctpopulation_w_bike_vehicles.xml.gz";
 
         Config config = ConfigUtils.loadConfig(configPath);
         Scenario scenario = ScenarioUtils.loadScenario(config);
@@ -26,9 +36,7 @@ public class AddBikeVehicles {
         Vehicles vehicles = scenario.getVehicles();
         String bikeTypeId = "default_bike";
         String bikeMode = "bike";
-        String ebike25TypeId = "default_ebike25";
-        String ebike45TypeId = "default_ebike45";
-        String ebikeMode = "ebike"; 
+
 
         // We define a bike vehicle type
         VehicleType bikeType = VehicleUtils.createVehicleType(Id.create(bikeTypeId, VehicleType.class));
@@ -44,100 +52,76 @@ public class AddBikeVehicles {
             bikeType = vehicles.getVehicleTypes().get(bikeType.getId());
         }
 
-        // Define ebike25 vehicle type (25 km/h)
-        VehicleType ebike25Type = VehicleUtils.createVehicleType(Id.create(ebike25TypeId, VehicleType.class));
-        ebike25Type.setMaximumVelocity(25.0 / 3.6); // 25 km/h
-        ebike25Type.setPcuEquivalents(0.25);
-        ebike25Type.getCapacity().setSeats(1);
-        ebike25Type.setNetworkMode(ebikeMode);  // ADD THIS LINE
-        ebike25Type.setLength(2.0); // ADD THIS LINE
 
-
-        if (!vehicles.getVehicleTypes().containsKey(ebike25Type.getId())) {
-            vehicles.addVehicleType(ebike25Type);
-        } else {
-            ebike25Type = vehicles.getVehicleTypes().get(ebike25Type.getId());
-        }
-
-        // Define ebike45 vehicle type (45 km/h)
-        VehicleType ebike45Type = VehicleUtils.createVehicleType(Id.create(ebike45TypeId, VehicleType.class));
-        ebike45Type.setMaximumVelocity(45.0 / 3.6); // 45 km/h
-        ebike45Type.setPcuEquivalents(0.25);
-        ebike45Type.getCapacity().setSeats(1);
-        ebike45Type.setNetworkMode(ebikeMode);  // ADD THIS LINE
-        ebike45Type.setLength(2.0); // ADD THIS LINE
-
-        if (!vehicles.getVehicleTypes().containsKey(ebike45Type.getId())) {
-            vehicles.addVehicleType(ebike45Type);
-        } else {
-            ebike45Type = vehicles.getVehicleTypes().get(ebike45Type.getId());
-        }
-        
-        // Here we add bike or ebike vehicles for each person
+        // Here we add bike vehicles for each person
+        // First, identify all persons who actually have bike legs
         for (Person person : scenario.getPopulation().getPersons().values()) {
-            if (person.getId().toString().contains("freight")){
+            // Skip freight agents
+            if (person.getId().toString().contains("freight")) {
                 continue;
             }
 
-            // Check ebike availability first
-            Object ebikeAvailability = person.getAttributes().getAttribute("ebikeAvailability");
+            // Check if person has any bike legs
+            boolean hasBikeLeg = false;
+            for (Plan plan : person.getPlans()) {
+                for (PlanElement element : plan.getPlanElements()) {
+                    if (element instanceof Leg) {
+                        Leg leg = (Leg) element;
+                        if (leg.getMode().equals("bike") || leg.getMode().equals("bike_loop")) {
+                            hasBikeLeg = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasBikeLeg) break;
+            }
+
+
+            // Check bike availability attribute
+            Object bikeAvailability = person.getAttributes().getAttribute("bikeAvailability");
             
-            if (ebikeAvailability != null && !ebikeAvailability.toString().equals("NO_EBIKE")) {
-                // Person has an ebike - set bikeAvailability to FOR_NONE
-                person.getAttributes().putAttribute("bikeAvailability", "FOR_NONE");
+
+            // Create bike vehicle if: bikeAvailability is not "FOR_NONE" OR person has bike legs
+            boolean shouldHaveBike = (bikeAvailability != null && !bikeAvailability.toString().equals("FOR_NONE")) || hasBikeLeg;
+    
+            if (shouldHaveBike) {
+                Id<Vehicle> vehicleId = Id.createVehicleId(person.getId().toString() + ":" + bikeMode);
                 
-                String vehicleMode;
-                VehicleType vehicleType;
-                
-                if (ebikeAvailability.toString().equals("EBIKE25")) {
-                    vehicleMode = ebikeMode;
-                    vehicleType = ebike25Type;
-                } else { // EBIKE45
-                    vehicleMode = ebikeMode;
-                    vehicleType = ebike45Type;
+                // Only add vehicle if it doesn't already exist
+                if (!vehicles.getVehicles().containsKey(vehicleId)) {
+                    Vehicle bikeVehicle = VehicleUtils.createVehicle(vehicleId, bikeType);
+                    vehicles.addVehicle(bikeVehicle);
                 }
                 
-                Id<Vehicle> vehicle_id = Id.createVehicleId(person.getId().toString() + ":" + vehicleMode);
-                Vehicle ebikeVehicle = VehicleUtils.createVehicle(vehicle_id, vehicleType);
-                vehicles.addVehicle(ebikeVehicle);
-                
-                // Update vehicles in the population file
-                Object vehicle_attr = person.getAttributes().getAttribute("vehicles");
+                // Update vehicles attribute in population file
+                Object vehicleAttr = person.getAttributes().getAttribute("vehicles");
                 PersonVehicles personVehicles;
 
-                if (vehicle_attr == null) {
+                if (vehicleAttr == null) {
                     personVehicles = new PersonVehicles();
                 } else {
-                    personVehicles = (PersonVehicles) vehicle_attr;
+                    personVehicles = (PersonVehicles) vehicleAttr;
                 }
 
-                personVehicles.addModeVehicle(vehicleMode, vehicle_id);
+                personVehicles.addModeVehicle(bikeMode, vehicleId);
                 person.getAttributes().putAttribute("vehicles", personVehicles);
-                
-            } else {
-                // Check if person has bike availability attribute (FOR_SOME or FOR_ALL)
-                Object bikeAvailability = person.getAttributes().getAttribute("bikeAvailability");
-                if (bikeAvailability != null && 
-                    (bikeAvailability.toString().equals("FOR_SOME") || bikeAvailability.toString().equals("FOR_ALL"))) {
-                    Id<Vehicle> vehicle_id = Id.createVehicleId(person.getId().toString() + ":" + bikeMode);
-                    Vehicle bikeVehicle = VehicleUtils.createVehicle(vehicle_id, bikeType);
-                    vehicles.addVehicle(bikeVehicle);
-                    
-                    // Update vehicles in the population file
-                    Object vehicle_attr = person.getAttributes().getAttribute("vehicles");
-                    PersonVehicles personVehicles;
-
-                    if (vehicle_attr == null) {
-                        personVehicles = new PersonVehicles();
-                    } else {
-                        personVehicles = (PersonVehicles) vehicle_attr;
+            }
+        }
+        // Remove routes for bike and bike_loop modes (let MATSim re-route them)
+        for (Person person : scenario.getPopulation().getPersons().values()) {
+            for (Plan plan : person.getPlans()) {
+                for (PlanElement element : plan.getPlanElements()) {
+                    if (element instanceof Leg) {
+                        Leg leg = (Leg) element;
+                        String mode = leg.getMode();
+                        
+                        // Remove routes for bike modes
+                        if ((mode.equals("bike") || mode.equals("bike_loop")) && leg.getRoute() != null) {
+                            leg.setRoute(null);  // Remove the route - MATSim will re-route
+                        }
                     }
-
-                    personVehicles.addModeVehicle(bikeMode, vehicle_id);
-                    person.getAttributes().putAttribute("vehicles", personVehicles);
                 }
             }
-            
         }
 
         new MatsimVehicleWriter(vehicles).writeFile(outputVehiclesFile);
