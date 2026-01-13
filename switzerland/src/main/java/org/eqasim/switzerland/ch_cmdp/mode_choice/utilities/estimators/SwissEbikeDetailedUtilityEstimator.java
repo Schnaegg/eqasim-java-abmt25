@@ -79,7 +79,7 @@ public class SwissEbikeDetailedUtilityEstimator extends BikeUtilityEstimator {
 
     protected double estimatedLongDistanceUtility(DiscreteModeChoiceTrip trip) {
         double distance_km = PredictorUtils.calculateEuclideanDistance_km(trip);
-        return distance_km>20.0 ? -1e3 : 0.0;
+        return distance_km>30.0 ? -1e3 : 0.0;
     }
 
     protected double estimateCantonUtility(Person person) {
